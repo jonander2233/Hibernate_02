@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "airport")
 public class Airport {
     @Id
     @Column(name = "IDAIRPORT", nullable = false)
@@ -13,6 +14,9 @@ public class Airport {
 
     @Column(name = "AIRPORTCAPACITY")
     private int capacity;
+
+    @OneToMany(mappedBy = "idairport")
+    private Set<Airplane> airplanes = new LinkedHashSet<Airplane>();
 
     @ManyToMany
     @JoinTable(
@@ -75,5 +79,16 @@ public class Airport {
 
     public void setNeighbourFrom(Set<Airport> neighborFrom) {
         this.neighborFrom = neighborFrom;
+    }
+
+    public void addNeighbor(Airport airport){
+        if(!this.neighborFrom.contains(airport)){
+            this.neighborFrom.add(airport);
+            airport.addNeighbor(this);
+        }
+        if(!this.neighbor.contains(airport)){
+            this.neighbor.add(airport);
+            airport.addNeighbor(this);
+        }
     }
 }

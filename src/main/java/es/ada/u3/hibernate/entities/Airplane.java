@@ -4,30 +4,63 @@ import jakarta.persistence.*;
 import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 
 import java.util.LinkedHashSet;
-import java.util.Set;
+
 @Entity
+@Table(name = "airplane")
 public class Airplane {
+
     @Id
-    @Column(name = "AIRPLANEREGNO")
+    @Column(name = "AIRPLANEREGNO", nullable = false)
     private Integer id;
 
-    @OneToMany
-    @JoinTable(
-            name = "airport",
-            joinColumns = @JoinColumn(name = "IDAIRPORT")
-    )
-    private Set<Airport> idairport;
+    @ManyToOne
+    @JoinColumn(name = "IDAIRPORT", nullable = false)
+    private Airport idairport;
 
     @ManyToOne
-    @JoinTable(
-            name = "airplanetype",
-            joinColumns = @JoinColumn(name = "airplanetypename")
-    )
+    @JoinColumn(name = "AIRPLANETYPENAME", nullable = false)
     private AirplaneType airplaneType;
 
     public Airplane() {
-        idairport = new LinkedHashSet<Airport>();
+        idairport = new Airport();
         airplaneType = new AirplaneType();
     }
 
+    public Airplane(Integer id, Airport idairport, AirplaneType airplaneType) {
+        this.id = id;
+        if(idairport != null){
+            this.idairport = idairport;
+        }else {
+            this.idairport = new Airport();
+        }
+        if(airplaneType != null){
+            this.airplaneType = airplaneType;
+        }else{
+            this.airplaneType = new AirplaneType();
+        }
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Airport getIdairport() {
+        return idairport;
+    }
+
+    public void setIdairport(Airport idairport) {
+        this.idairport = idairport;
+    }
+
+    public AirplaneType getAirplaneType() {
+        return airplaneType;
+    }
+
+    public void setAirplaneType(AirplaneType airplaneType) {
+        this.airplaneType = airplaneType;
+    }
 }
