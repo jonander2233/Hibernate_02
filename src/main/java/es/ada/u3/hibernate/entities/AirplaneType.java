@@ -42,4 +42,12 @@ public class AirplaneType {
     public void setAirplaneTypeSize(Integer airplaneTypeSize) {
         this.airplaneTypeSize = airplaneTypeSize;
     }
+
+    @Override
+    public String toString() {
+        return "AirplaneType{" +
+                "airplaneTypeName='" + airplaneTypeName + '\'' +
+                ", airplaneTypeSize=" + airplaneTypeSize +
+                '}';
+    }
 }

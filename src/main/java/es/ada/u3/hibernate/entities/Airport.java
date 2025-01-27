@@ -9,13 +9,13 @@ import java.util.Set;
 @Table(name = "airport")
 public class Airport {
     @Id
-    @Column(name = "IDAIRPORT", nullable = false)
+    @Column(name = "IDAIRPORT", nullable = false,length = 3)
     private String id;
 
     @Column(name = "AIRPORTCAPACITY")
     private int capacity;
 
-    @OneToMany(mappedBy = "idairport")
+    @OneToMany(mappedBy = "airport", cascade = CascadeType.REMOVE)
     private Set<Airplane> airplanes = new LinkedHashSet<Airplane>();
 
     @ManyToMany
@@ -24,29 +24,42 @@ public class Airport {
             joinColumns = @JoinColumn(name = "IDAIRPORT_A"),
             inverseJoinColumns = @JoinColumn(name = "IDAIRPORT_B")
     )
-    private Set<Airport> neighbor = null;
+    private Set<Airport> neighbors = null;
 
-    @ManyToMany(mappedBy = "neighbor")
-    private Set<Airport> neighborFrom = null;
+    @ManyToMany(mappedBy = "neighbors")
+    private Set<Airport> neighborsFrom = null;
+
 
     public Airport() {
-        neighbor = new LinkedHashSet<Airport>();
-        neighborFrom = new LinkedHashSet<Airport>();
+        neighbors = new LinkedHashSet<Airport>();
+        neighborsFrom = new LinkedHashSet<Airport>();
     }
 
-    public Airport(String id,int capacity, Set<Airport> neighbor, Set<Airport> neighborFrom) {
+    public Airport(String id,int capacity, Set<Airport> neighbors, Set<Airport> neighborsFrom) {
         this.id = id;
         this.capacity = capacity;
-        if(neighbor != null){
-            this.neighbor = neighbor;
+        if(neighbors != null){
+            this.neighbors = neighbors;
         }else{
-            this.neighbor = new LinkedHashSet<Airport>();
+            this.neighbors = new LinkedHashSet<Airport>();
         }
-        if(neighborFrom != null){
-            this.neighborFrom = neighborFrom;
+        if(neighborsFrom != null){
+            this.neighborsFrom = neighborsFrom;
         }else {
-            this.neighborFrom = new LinkedHashSet<Airport>();
+            this.neighborsFrom = new LinkedHashSet<Airport>();
         }
+
+    }
+
+    public void addAirplane(Airplane airplane){
+        airplanes.add(airplane);
+    }
+    public Set<Airplane> getAirplanes() {
+        return airplanes;
+    }
+
+    public void setAirplanes(Set<Airplane> airplanes) {
+        this.airplanes = airplanes;
     }
 
     public String getId() {
@@ -66,29 +79,44 @@ public class Airport {
     }
 
     public Set<Airport> getNeighbour() {
-        return neighbor;
+        return neighbors;
     }
 
-    public void setNeighbour(Set<Airport> neighbor) {
-        this.neighbor = neighbor;
+    public void setNeighbour(Set<Airport> neighbors) {
+        this.neighbors = neighbors;
     }
 
     public Set<Airport> getNeighbourFrom() {
-        return neighborFrom;
+        return neighborsFrom;
     }
 
-    public void setNeighbourFrom(Set<Airport> neighborFrom) {
-        this.neighborFrom = neighborFrom;
+    public void setNeighbourFrom(Set<Airport> neighborsFrom) {
+        this.neighborsFrom = neighborsFrom;
     }
 
     public void addNeighbor(Airport airport){
-        if(!this.neighborFrom.contains(airport)){
-            this.neighborFrom.add(airport);
+        if(!this.neighborsFrom.contains(airport)){
+            this.neighborsFrom.add(airport);
             airport.addNeighbor(this);
         }
-        if(!this.neighbor.contains(airport)){
-            this.neighbor.add(airport);
+        if(!this.neighbors.contains(airport)){
+            this.neighbors.add(airport);
             airport.addNeighbor(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Airport{" +
+                "id='" + id + '\'' +
+                ", capacity=" + capacity +
+                ", airplanes id { ");
+
+        for(Airplane airplane : airplanes){
+            sb.append("id = " + airplane.getId() + " ");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }

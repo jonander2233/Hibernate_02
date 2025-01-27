@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AirportDAO {
@@ -28,9 +29,10 @@ public class AirportDAO {
     }
         public List<Airport> loadAirports()throws HibernateException {
         Session session = HibernateSessionFactory.getSessionSingleton();
-        TypedQuery<Airport> query = session.createNativeQuery("select * FROM airplanetype", Airport.class);
+        TypedQuery<Airport> query = session.createNativeQuery("select * FROM airport", Airport.class);
         return query.getResultList();
     }
+
     public void updateAirportNeighborhood(Airport airportFrom, Airport airportTo)throws HibernateException {
         Session session = HibernateSessionFactory.getSessionSingleton();
         Transaction tx = null;
@@ -42,6 +44,7 @@ public class AirportDAO {
         session.merge(airportTo1);
         tx.commit();
     }
+
     public void updateAirportNeighborhood(String airportFromID, String airportToID)throws HibernateException {
         Session session = HibernateSessionFactory.getSessionSingleton();
         Transaction tx = null;
@@ -51,6 +54,16 @@ public class AirportDAO {
         airportFrom1.addNeighbor(airportTo1);
         session.merge(airportFrom1);
         session.merge(airportTo1);
+        tx.commit();
+    }
+    public void deleteAirports(){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        Transaction tx = null;
+        tx = session.beginTransaction();
+        ArrayList<Airport> airports = (ArrayList<Airport>) this.loadAirports();
+        for(Airport airport : airports){
+            session.remove(airport);
+        }
         tx.commit();
     }
 

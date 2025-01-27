@@ -1,9 +1,6 @@
 package es.ada.u3.hibernate.entities;
 
 import jakarta.persistence.*;
-import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
-
-import java.util.LinkedHashSet;
 
 @Entity
 @Table(name = "airplane")
@@ -15,23 +12,24 @@ public class Airplane {
 
     @ManyToOne
     @JoinColumn(name = "IDAIRPORT", nullable = false)
-    private Airport idairport;
+    private Airport airport;
 
     @ManyToOne
     @JoinColumn(name = "AIRPLANETYPENAME", nullable = false)
     private AirplaneType airplaneType;
 
     public Airplane() {
-        idairport = new Airport();
+        airport = new Airport();
         airplaneType = new AirplaneType();
     }
 
-    public Airplane(Integer id, Airport idairport, AirplaneType airplaneType) {
+    public Airplane(Integer id, Airport airport, AirplaneType airplaneType) {
         this.id = id;
-        if(idairport != null){
-            this.idairport = idairport;
+        if(airport != null){
+            this.airport = airport;
+            airport.addAirplane(this);
         }else {
-            this.idairport = new Airport();
+            this.airport = new Airport();
         }
         if(airplaneType != null){
             this.airplaneType = airplaneType;
@@ -48,12 +46,12 @@ public class Airplane {
         this.id = id;
     }
 
-    public Airport getIdairport() {
-        return idairport;
+    public Airport getAirport() {
+        return airport;
     }
 
-    public void setIdairport(Airport idairport) {
-        this.idairport = idairport;
+    public void setAirport(Airport airport) {
+        this.airport = airport;
     }
 
     public AirplaneType getAirplaneType() {
@@ -62,5 +60,15 @@ public class Airplane {
 
     public void setAirplaneType(AirplaneType airplaneType) {
         this.airplaneType = airplaneType;
+    }
+//
+
+    @Override
+    public String toString() {
+        return "Airplane{" +
+                "id=" + id +
+                ", airport=" + airport.getId() +
+                ", airplaneType=" + airplaneType +
+                '}';
     }
 }

@@ -28,8 +28,6 @@ public class AirplaneDAO {
         return airplane;
     }
     public List<Airplane> loadAirplanes()throws HibernateException {
-        AirplaneTypeDAO airplanetype = AirplaneTypeDAO.getInstance();
-        airplanetype.loadAirplaneTypes();
         Session session = HibernateSessionFactory.getSessionSingleton();
         TypedQuery<Airplane> query = session.createNativeQuery("select * FROM Airplane", Airplane.class);
         return query.getResultList();

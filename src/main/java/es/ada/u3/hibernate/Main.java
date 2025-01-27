@@ -6,12 +6,52 @@ import es.ada.u3.hibernate.dao.AirportDAO;
 import es.ada.u3.hibernate.entities.Airplane;
 import es.ada.u3.hibernate.entities.AirplaneType;
 import es.ada.u3.hibernate.entities.Airport;
+import es.ada.u3.hibernate.utils.HibernateSessionFactory;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
+        private static AirplaneTypeDAO typeDAO = AirplaneTypeDAO.getInstance();
+        private static AirportDAO airportDAO = AirportDAO.getInstance();
+        private static AirplaneDAO airplaneDAO = AirplaneDAO.getInstance();
+
     public static void main(String[] args) {
-        AirplaneTypeDAO typeDAO = AirplaneTypeDAO.getInstance();
-        AirportDAO airportDAO = AirportDAO.getInstance();
-        AirplaneDAO airplaneDAO = AirplaneDAO.getInstance();
+        hqlquerys();
+//        borrarAeropuertos(); //falla persistent instance references an unsaved transient instance of 'es.ada.u3.hibernate.entities.Airport' (save the transient instance before flushing)
+//        listarAviones();
+//        listarAeropuertos();
+    }
+
+    private static void hqlquerys(){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        Query<Airplane> queryAirplanes = session.createQuery("FROM Airplane a WHERE a.id = :id",Airplane.class);
+        queryAirplanes.setParameter("id",111);
+        List<Airplane> relatedAirplanes = queryAirplanes.list();
+        for (Airplane airplane : relatedAirplanes){
+            System.out.println(airplane.toString());
+        }
+    }
+
+
+    private static void  borrarAeropuertos(){
+        airportDAO.deleteAirports();
+    }
+    private static void listarAeropuertos(){
+        ArrayList<Airport> airports = (ArrayList<Airport>) airportDAO.loadAirports();
+        for(Airport airport : airports){
+            System.out.println(airport.toString());
+        }
+    }
+    private static void listarAviones(){
+        ArrayList<Airplane> airplanes =(ArrayList<Airplane>) airplaneDAO.loadAirplanes();
+        for (Airplane airplane : airplanes){
+            System.out.println(airplane.toString());
+        }
+    }
+    private static void crear(){
         //crear los objetos en memoria
         AirplaneType airplaneType1 = new AirplaneType("small",10);
         AirplaneType airplaneType2 = new AirplaneType("medium",15);
@@ -42,14 +82,6 @@ public class Main {
         airportDAO.updateAirportNeighborhood(airport1,airport2);
         airportDAO.updateAirportNeighborhood(airport3,airport1);
         airportDAO.updateAirportNeighborhood(airport3,airport2);
-
-
-
-
-
-
-
-
 
 
     }
