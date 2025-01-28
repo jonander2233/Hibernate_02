@@ -7,6 +7,9 @@ import es.ada.u3.hibernate.entities.Airplane;
 import es.ada.u3.hibernate.entities.AirplaneType;
 import es.ada.u3.hibernate.entities.Airport;
 import es.ada.u3.hibernate.utils.HibernateSessionFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -14,13 +17,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-        private static AirplaneTypeDAO typeDAO = AirplaneTypeDAO.getInstance();
-        private static AirportDAO airportDAO = AirportDAO.getInstance();
-        private static AirplaneDAO airplaneDAO = AirplaneDAO.getInstance();
+    private static AirplaneTypeDAO typeDAO = AirplaneTypeDAO.getInstance();
+    private static AirportDAO airportDAO = AirportDAO.getInstance();
+    private static AirplaneDAO airplaneDAO = AirplaneDAO.getInstance();
 
     public static void main(String[] args) {
-        consultarAvionesPertenecientes(200);
+
     }
+//-------------------------------------------criteria---------------------------------------------------------------------------------
+    private static void cbListarAvionesPorIdDescendiente(){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+
+        CriteriaQuery<Airplane> cq = cb.createQuery(Airplane.class);
+        Root<Airplane> root = cq.from(Airplane.class);
+
+        cq.select(root).where(cb.equal(root.get("airplaneType").get("airplaneTypeName"),"small"));
+        List<Airplane> airplanes = session.createQuery(cq).getResultList();
+
+        for(Airplane airplane : airplanes){
+            System.out.println(airplane);
+        }
+
+    }
+
+    private static void cbConsultarAvionesPorTipo(){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+
+        CriteriaQuery<Airplane> cq = cb.createQuery(Airplane.class);
+        Root<Airplane> root = cq.from(Airplane.class);
+
+        cq.select(root).where(cb.equal(root.get("airplaneType").get("airplaneTypeName"),"small"));
+        List<Airplane> airplanes = session.createQuery(cq).getResultList();
+
+        for(Airplane airplane : airplanes){
+            System.out.println(airplane);
+        }
+
+    }
+
+
+
+
+
 //------------------------------------------hql_querys------------------------------------------------------------------------
     private static void consultarAvionesPertenecientes(int tamano){
         Session session = HibernateSessionFactory.getSessionSingleton();
