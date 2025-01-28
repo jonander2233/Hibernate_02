@@ -19,14 +19,53 @@ public class Main {
         private static AirplaneDAO airplaneDAO = AirplaneDAO.getInstance();
 
     public static void main(String[] args) {
-        hqlquerys();
-//        borrarAeropuertos(); //falla persistent instance references an unsaved transient instance of 'es.ada.u3.hibernate.entities.Airport' (save the transient instance before flushing)
-//        listarAviones();
-//        listarAeropuertos();
+        consultarAvionesPertenecientes(200);
+    }
+//------------------------------------------hql_querys------------------------------------------------------------------------
+    private static void consultarAvionesPertenecientes(int tamano){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        Query<Airplane> queryAirplanes = session.createQuery("FROM Airplane a WHERE a.airport.capacity > :capacity ",Airplane.class);
+        queryAirplanes.setParameter("capacity",tamano);
+        List<Airplane> relatedAirplanes = queryAirplanes.list();
+        for (Airplane airplane : relatedAirplanes){
+            System.out.println(airplane.toString());
+        }
+    }
+
+
+    private static void listarAvionesPorTamanyoDelTipoYporID(){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        Query<Airplane> queryAirplanes = session.createQuery("FROM Airplane a ORDER BY a.airplaneType.airplaneTypeSize, a.id ",Airplane.class);
+        List<Airplane> relatedAirplanes = queryAirplanes.list();
+        for (Airplane airplane : relatedAirplanes){
+            System.out.println(airplane.toString());
+        }
+    }
+
+    private static void listarAvionesPorIdDescendiente(){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        Query<Airplane> queryAirplanes = session.createQuery("FROM Airplane ORDER BY id DESC",Airplane.class);
+        List<Airplane> relatedAirplanes = queryAirplanes.list();
+        for (Airplane airplane : relatedAirplanes){
+            System.out.println(airplane.toString());
+        }
+
+    }
+
+    private static void consultarAvionesPorNombreDeTipo(){
+        Session session = HibernateSessionFactory.getSessionSingleton();
+        Query<Airplane> queryAirplanes = session.createQuery("FROM Airplane a WHERE a.airplaneType.airplaneTypeName = :type",Airplane.class);
+        queryAirplanes.setParameter("type","small");
+        List<Airplane> relatedAirplanes = queryAirplanes.list();
+        for (Airplane airplane : relatedAirplanes){
+            System.out.println(airplane.toString());
+        }
+
     }
 
     private static void hqlquerys(){
         Session session = HibernateSessionFactory.getSessionSingleton();
+
         Query<Airplane> queryAirplanes = session.createQuery("FROM Airplane a WHERE a.id = :id",Airplane.class);
         queryAirplanes.setParameter("id",111);
         List<Airplane> relatedAirplanes = queryAirplanes.list();
@@ -35,6 +74,8 @@ public class Main {
         }
     }
 
+
+    //---------------------------------------anotaciones-----------------------------------------------------
 
     private static void  borrarAeropuertos(){
         airportDAO.deleteAirports();
